@@ -9,7 +9,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -42,10 +41,10 @@ class MyHomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Text('You have pushed the button this many times:'),
-              BlocBuilder<CounterCubit, CounterState>(
+              BlocBuilder<CounterCubit, int>(
                 builder: (context, state) {
                   return Text(
-                    state.count.toString(),
+                    state.toString(),
                     style: Theme.of(context).textTheme.headlineMedium,
                   );
                 },
@@ -53,7 +52,7 @@ class MyHomePage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: BlocBuilder<CounterCubit, CounterState>(
+        floatingActionButton: BlocBuilder<CounterCubit, int>(
           builder: (context, state) {
             return Column(
               spacing: 10,
