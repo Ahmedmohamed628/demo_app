@@ -26,9 +26,12 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
 
+  // UserModel user1 = UserModel(id: 1, name: 'ahmed');
+  // UserModel user2 = UserModel(id: 1, name: 'ahmed');
+
   @override
   Widget build(BuildContext context) {
-    print('build parent');
+    // print('build parent');
     return BlocProvider(
       create: (context) => CounterBloc(),
       child: Scaffold(
@@ -43,6 +46,7 @@ class MyHomePage extends StatelessWidget {
               const Text('You have pushed the button this many times:'),
               BlocBuilder<CounterBloc, CounterState>(
                 builder: (context, state) {
+                  // print(user1 == user2);
                   return Text(
                     state.count.toString(),
                     style: Theme.of(context).textTheme.headlineMedium,
