@@ -1,6 +1,7 @@
-import 'package:demo_project/controllers/bloc/task_bloc.dart';
+import 'package:demo_project/widgets/card_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'controllers/cubit/products_cubit.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,7 +31,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TaskBloc(),
+      create: (context) => ProductsCubit()..getProductData(),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme
@@ -39,61 +40,35 @@ class MyHomePage extends StatelessWidget {
               .inversePrimary,
           title: Text(title),
         ),
-        body: BlocBuilder<TaskBloc, TaskState>(
+        body: BlocBuilder<ProductsCubit, ProductsState>(
           builder: (context, state) {
-            final controllerBLoc = context.read<TaskBloc>();
-            return GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(),
-                          labelText: 'Add task'
-                      ),
-                    ),
-
-                    ElevatedButton(onPressed: () {
-                      if (controller.text.isEmpty) return;
-                      controllerBLoc.add(AddTaskEvent(title: controller.text));
-                      controller.clear();
-                    }, child: Text('Add')),
-
-                    SizedBox(height: 15,),
-
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: state.tasksList.length,
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            shape: OutlineInputBorder(),
-                            tileColor: Colors.black54,
-                            title: Text(state.tasksList[index].title,
-                              style: TextStyle(color: Colors.white),),
-                            leading: Checkbox(
-                              activeColor: Colors.green,
-                              value: state.tasksList[index].isCompleted,
-                              onChanged: (value) =>
-                                  controllerBLoc.add(ToggleTaskEvent(
-                                      id: state.tasksList[index].id)),
-                            ),
-                            trailing: IconButton(onPressed: () =>
-                                controllerBLoc.add(RemoveTaskEvent(
-                                    id: state.tasksList[index].id)),
-                                icon: Icon(Icons.delete, color: Colors.red,)),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+            switch (state) {
+              case ProductsLoading():
+                return const Center(child: CircularProgressIndicator());
+              case ProductsLoaded():
+                return GridView.builder(
+                  itemCount: state.productList.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 5,
+                    crossAxisSpacing: 5,
+                    childAspectRatio: 0.7,
+                  ),
+                  itemBuilder: (context, index) {
+                    final products = state.productList[index];
+                    return CardItems(
+                      title: products.title,
+                      description: products.description,
+                      price: products.price,
+                      image: products.thumbnail,
+                      category: products.category,
+                      rate: products.rating.toString(),
+                    );
+                  },
+                );
+              case ProductsError():
+                return Center(child: Text(state.errorMessage.toString()));
+            }
           },
         ),
       ),
