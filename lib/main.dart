@@ -1,8 +1,16 @@
 import 'package:demo_project/controllers/cubit/counter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // setup for hydrated bloc
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: HydratedStorageDirectory(
+        (await getTemporaryDirectory()).path),
+  );
   runApp(const MyApp());
 }
 
@@ -41,10 +49,10 @@ class MyHomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Text('You have pushed the button this many times:'),
-              BlocBuilder<CounterCubit, int>(
+              BlocBuilder<CounterCubit, CounterState>(
                 builder: (context, state) {
                   return Text(
-                    state.toString(),
+                    state.count.toString(),
                     style: Theme.of(context).textTheme.headlineMedium,
                   );
                 },
@@ -52,7 +60,7 @@ class MyHomePage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: BlocBuilder<CounterCubit, int>(
+        floatingActionButton: BlocBuilder<CounterCubit, CounterState>(
           builder: (context, state) {
             return Column(
               spacing: 10,
