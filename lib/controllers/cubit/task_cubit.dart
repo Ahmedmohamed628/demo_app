@@ -1,12 +1,12 @@
 import 'package:demo_project/models/task_model.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
 part 'task_state.dart';
 
-class TaskCubit extends Cubit<TaskState> {
+class TaskCubit extends HydratedCubit<TaskState> {
   TaskCubit() : super(TaskInitial());
 
   //1st function
@@ -37,5 +37,24 @@ class TaskCubit extends Cubit<TaskState> {
         }).toList();
 
     emit(UpdateTask(newList));
+  }
+
+  @override
+  TaskState? fromJson(Map<String, dynamic> json) {
+    try {
+      final List<dynamic> taskList = json['taskList'];
+      final List<TaskModel> task = taskList.map((e) => TaskModel.fromJson(e))
+          .toList();
+      return UpdateTask(task);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(TaskState state) {
+    return {
+      'taskList': state.tasksList.map((task) => task.toJson()).toList(),
+    };
   }
 }
