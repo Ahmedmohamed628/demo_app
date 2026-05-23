@@ -44,7 +44,14 @@ class MyHomePage extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(title),
         ),
-        body: Center(
+        body: BlocListener<CounterCubit, CounterState>(
+          listener: (context, state) {
+            if (state.count == 5) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Count is 5')),);
+            }
+          },
+          child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -59,6 +66,7 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
+        ),
         ),
         floatingActionButton: BlocBuilder<CounterCubit, CounterState>(
           builder: (context, state) {
