@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,7 +12,7 @@ part 'task_state.dart';
 
 //todo: with function method
 
-class TaskBloc extends Bloc<TaskEvent, TaskState> {
+class TaskBloc extends HydratedBloc<TaskEvent, TaskState> {
   TaskBloc() : super(TaskInitial()) {
     on<AddTaskEvent>(_addTask);
 
@@ -40,11 +40,31 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   FutureOr<void> _toggleTask(ToggleTaskEvent event, Emitter<TaskState> emit) {
     final List<TaskModel> newList =
         state.tasksList.map((task) {
-          return task.id == event.id
-              ? task.copyWith(isCompleted: !task.isCompleted)
-              : task;
+          return task.id == event.id ? task.copyWith(
+              isCompleted: !task.isCompleted) : task;
         }).toList();
     emit(UpdateTask(newList));
+  }
+
+  @override
+  TaskState? fromJson(Map<String, dynamic> json) {
+    try {
+      final List<dynamic> taskList = json['taskList'];
+      final List<TaskModel> tasks = taskList.map((e) => TaskModel.fromJson(e))
+          .toList();
+      return UpdateTask(tasks);
+    } catch (e) {
+      return null;
+    }
+
+    // return UpdateTask((json['taskList'] as List<dynamic>).map((e) => TaskModel.fromJson(e)).toList());
+  }
+
+  @override
+  Map<String, dynamic>? toJson(TaskState state) {
+    return {
+      'taskList': state.tasksList.map((task) => task.toJson(),).toList()
+    };
   }
 }
 
