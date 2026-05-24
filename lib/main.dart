@@ -1,4 +1,5 @@
-import 'package:demo_project/controllers/cubit/counter_cubit.dart';
+import 'package:demo_project/controllers/cubit/login_cubit.dart';
+import 'package:demo_project/widgets/custom_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -20,74 +21,115 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Login',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: BlocProvider(
+        create: (context) => LoginCubit(),
+        child: MyHomePage(),
+      ),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
+  MyHomePage({super.key});
 
-  final String title;
-
+  // final String title;
+  // final emailController = TextEditingController(text: 'am@gmail.com');
+  final nameController = TextEditingController(text: 'ahmed');
+  final passwordController = TextEditingController(text: '123456789');
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    print('build parent');
-    return BlocProvider(
-      create: (context) => CounterCubit(),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(title),
-        ),
-        body: BlocListener<CounterCubit, CounterState>(
+        body: BlocListener<LoginCubit, LoginState>(
           listener: (context, state) {
-            if (state.count == 5) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Count is 5')),);
+            if (state is LoginFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(state.errorMessage),
+                backgroundColor: Colors.red,),
+              );
+            } else if (state is LoginSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Login Success'), backgroundColor: Colors.green,),
+              );
             }
           },
-          child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('You have pushed the button this many times:'),
-              BlocBuilder<CounterCubit, CounterState>(
-                builder: (context, state) {
-                  return Text(
-                    state.count.toString(),
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  );
-                },
-              ),
-            ],
+          child: BlocBuilder<LoginCubit, LoginState>(
+            builder: (context, state) {
+              return Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.02,
+                  children: [
+                    SizedBox(height: 200),
+                    Text('Welcome back to login.', style: TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 40, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(30),
+                            topLeft: Radius.circular(30),),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            spacing: MediaQuery
+                                .of(context)
+                                .size
+                                .height * 0.02,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              CustomTextFormField(
+                                isEmail: false,
+                                labelText: 'name',
+                                prefixIcon: Icon(Icons.person_pin),
+                                controller: nameController,
+                              ),
+                              CustomTextFormField(
+                                isPassword: true,
+                                labelText: 'password',
+                                prefixIcon: Icon(Icons.password),
+                                controller: passwordController,
+                              ),
+                              state is LoginLoading ? Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,),) :
+                              ElevatedButton(
+                                  onPressed: () {
+                                    context.read<LoginCubit>().login(
+                                        nameController.text,
+                                        passwordController.text);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.blue,
+                                  ),
+                                  child: Text('Login')
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
-        ),
-        floatingActionButton: BlocBuilder<CounterCubit, CounterState>(
-          builder: (context, state) {
-            return Column(
-              spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  onPressed: () => context.read<CounterCubit>().increment(),
-                  tooltip: 'Increment',
-                  child: const Icon(Icons.add),
-                ),
-                FloatingActionButton(
-                  onPressed: () => context.read<CounterCubit>().decrement(),
-                  tooltip: 'decrement',
-                  child: const Icon(Icons.minimize),
-                ),
-              ],
-            );
-          },
-        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }
