@@ -42,12 +42,13 @@ class MyHomePage extends StatelessWidget {
   final nameController = TextEditingController(text: 'ahmed');
   final passwordController = TextEditingController(text: '123456789');
   final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        body: BlocListener<LoginCubit, LoginState>(
+        body: BlocConsumer<LoginCubit, LoginState>(
           listener: (context, state) {
             if (state is LoginFailure) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -56,79 +57,78 @@ class MyHomePage extends StatelessWidget {
               );
             } else if (state is LoginSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Login Success'), backgroundColor: Colors.green,),
+                content: Text('Login Success'),
+                backgroundColor: Colors.green,),
               );
             }
           },
-          child: BlocBuilder<LoginCubit, LoginState>(
-            builder: (context, state) {
-              return Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.02,
-                  children: [
-                    SizedBox(height: 200),
-                    Text('Welcome back to login.', style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w500),),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 40, horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(30),
-                            topLeft: Radius.circular(30),),
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            spacing: MediaQuery
-                                .of(context)
-                                .size
-                                .height * 0.02,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              CustomTextFormField(
-                                isEmail: false,
-                                labelText: 'name',
-                                prefixIcon: Icon(Icons.person_pin),
-                                controller: nameController,
-                              ),
-                              CustomTextFormField(
-                                isPassword: true,
-                                labelText: 'password',
-                                prefixIcon: Icon(Icons.password),
-                                controller: passwordController,
-                              ),
-                              state is LoginLoading ? Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,),) :
-                              ElevatedButton(
-                                  onPressed: () {
-                                    context.read<LoginCubit>().login(
-                                        nameController.text,
-                                        passwordController.text);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: Colors.blue,
-                                  ),
-                                  child: Text('Login')
-                              ),
-                            ],
-                          ),
+          builder: (context, state) {
+            return Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.02,
+                children: [
+                  SizedBox(height: 200),
+                  Text('Welcome back to login.', style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(30),
+                          topLeft: Radius.circular(30),),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          spacing: MediaQuery
+                              .of(context)
+                              .size
+                              .height * 0.02,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            CustomTextFormField(
+                              isEmail: false,
+                              labelText: 'name',
+                              prefixIcon: Icon(Icons.person_pin),
+                              controller: nameController,
+                            ),
+                            CustomTextFormField(
+                              isPassword: true,
+                              labelText: 'password',
+                              prefixIcon: Icon(Icons.password),
+                              controller: passwordController,
+                            ),
+                            state is LoginLoading ? Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,),) :
+                            ElevatedButton(
+                                onPressed: () {
+                                  context.read<LoginCubit>().login(
+                                      nameController.text,
+                                      passwordController.text);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.blue,
+                                ),
+                                child: Text('Login')
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
