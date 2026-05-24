@@ -48,22 +48,7 @@ class MyHomePage extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        body: BlocConsumer<LoginCubit, LoginState>(
-          listener: (context, state) {
-            if (state is LoginFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(state.errorMessage),
-                backgroundColor: Colors.red,),
-              );
-            } else if (state is LoginSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Login Success'),
-                backgroundColor: Colors.green,),
-              );
-            }
-          },
-          builder: (context, state) {
-            return Form(
+        body: Form(
               key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -105,21 +90,43 @@ class MyHomePage extends StatelessWidget {
                               prefixIcon: Icon(Icons.password),
                               controller: passwordController,
                             ),
-                            state is LoginLoading ? Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,),) :
-                            ElevatedButton(
-                                onPressed: () {
-                                  context.read<LoginCubit>().login(
-                                      nameController.text,
-                                      passwordController.text);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.blue,
-                                ),
-                                child: Text('Login')
+
+                            // todo: to not rebuild the whole body but only the elevated button
+                            BlocConsumer<LoginCubit, LoginState>(
+                              listener: (context, state) {
+                                if (state is LoginFailure) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(state.errorMessage),
+                                      backgroundColor: Colors.red,),
+                                  );
+                                } else if (state is LoginSuccess) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Login Success'),
+                                      backgroundColor: Colors.green,),
+                                  );
+                                }
+                              },
+                              builder: (context, state) {
+                                return state is LoginLoading ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,),) :
+                                ElevatedButton(
+                                    onPressed: () {
+                                      context.read<LoginCubit>().login(
+                                          nameController.text,
+                                          passwordController.text);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: Colors.blue,),
+                                    child: Text('Login')
+                                );
+                              },
+
                             ),
+
                           ],
                         ),
                       ),
@@ -127,9 +134,9 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          },
         ),
+
+
       ),
     );
   }
