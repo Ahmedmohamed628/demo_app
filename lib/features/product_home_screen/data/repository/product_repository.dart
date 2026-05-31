@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:demo_project/models/product_model/product_model.dart';
 import 'package:http/http.dart' as http;
+
+import '../model/product_model/product_model.dart';
 
 class ProductRepository {
   Future<List<ProductModel>> getProduct() async {

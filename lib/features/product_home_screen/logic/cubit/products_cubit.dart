@@ -1,8 +1,8 @@
-import 'package:demo_project/models/product_model/product_model.dart';
-import 'package:demo_project/repositories/product_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
+import '../../data/model/product_model/product_model.dart';
+import '../../data/repository/product_repository.dart';
 
 part 'products_state.dart';
 
