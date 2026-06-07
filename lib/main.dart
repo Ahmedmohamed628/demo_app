@@ -1,5 +1,7 @@
 import 'package:demo_project/app_routers.dart';
 import 'package:flutter/material.dart';
+import 'core/constants/routes.dart';
+
 
 void main() {
   runApp(MyApp(appRouters: AppRouters(),));
@@ -14,6 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouters.generateRoute,
+      // initialRoute: Routes.characterHomeScreen,
 
     );
   }

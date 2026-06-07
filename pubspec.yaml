@@ -44,6 +44,7 @@ dependencies:
   dio: ^5.9.2
   flutter_offline: ^6.0.0
   dartz: ^0.10.1
+  skeletonizer: ^1.4.3
 
 dev_dependencies:
   flutter_test:

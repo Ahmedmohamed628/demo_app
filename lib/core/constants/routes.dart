@@ -1,5 +1,5 @@
 class Routes {
-  static const String initialRoute = '/';
+  // static const String initialRoute = '/';
   static const String characterHomeScreen =
       '/character-product_home_screen-screen';
   static const String characterDetailsScreen = '/character-details-screen';
