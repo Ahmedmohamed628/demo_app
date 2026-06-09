@@ -5,7 +5,7 @@ import 'package:demo_project/features/character_home_screen/ui/screens/character
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/character_home_screen/data/character_api_service_modified.dart';
-import 'features/character_home_screen/data/model/character_model/character_model.dart';
+import 'features/character_home_screen/data/model/character_model.dart';
 import 'features/character_home_screen/data/repository/character_repository.dart';
 import 'features/character_home_screen/ui/screens/character_details_screen.dart';
 
@@ -15,13 +15,13 @@ class AppRouters {
     //root route or home screen route (/)
       case '/':
       case Routes.characterHomeScreen:
-        return MaterialPageRoute(builder: (_) =>
-            BlocProvider(
-              create: (context) =>
-              CharacterCubit(
-                CharacterRepository(CharacterApiServiceModified(ApiService())),
-              )
-                ..getCharactersFunction(),
+      return MaterialPageRoute(builder: (_) =>
+          BlocProvider(
+            create: (context) =>
+            CharacterCubit(
+              CharacterRepository(CharacterApiServiceModified(ApiService())),
+            )
+              ..getCharactersFunction(),
               child: const CharacterHomeScreen(),
             ));
 

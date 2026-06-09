@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:demo_project/core/errors/failure.dart';
 import '../../../../core/network/error_handler.dart';
 import '../character_api_service_modified.dart';
-import '../model/character_model/character_response_model.dart';
+import '../model/character_response_model.dart';
 
 class CharacterRepository {
   final CharacterApiServiceModified _characterApiServiceModified;

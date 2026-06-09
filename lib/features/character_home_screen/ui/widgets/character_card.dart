@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class CharacterCard extends StatelessWidget {
   const CharacterCard({
     super.key,
+    this.id,
     this.image,
     this.name,
     this.status,
@@ -12,6 +13,7 @@ class CharacterCard extends StatelessWidget {
     this.gender,
   });
 
+  final int? id;
   final String? image;
   final String? name;
   final String? status;
@@ -19,7 +21,6 @@ class CharacterCard extends StatelessWidget {
   final String? type;
   final String? gender;
 
-  // 👈 دالة ذكية لتحديد لون مؤشر الحالة
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
       case 'alive':
@@ -31,7 +32,6 @@ class CharacterCard extends StatelessWidget {
     }
   }
 
-  // 👈 دالة لتحديد أيقونة النوع الاجتماعي
   IconData _getGenderIcon(String? gender) {
     switch (gender?.toLowerCase()) {
       case 'male':
@@ -48,12 +48,12 @@ class CharacterCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16), // حواف ناعمة ومودرن
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
             blurRadius: 10,
-            offset: const Offset(0, 4), // ظل خفيف لتحت بيدي عمق
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -70,39 +70,40 @@ class CharacterCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child:
-                        (image == null ||
-                                image!.trim().isEmpty ||
-                                !image!.startsWith('http'))
-                            ? Container(
+                    child: (image == null || image!.trim().isEmpty ||
+                        !image!.startsWith('http')) ?
+                    Container(
+                      color: Colors.grey[100],
+                      child: Icon(
+                        Icons.broken_image_outlined, color: Colors.grey[400],
+                        size: 40,),
+                            )
+                        : Hero(
+                      tag: id!,
+                      child: CachedNetworkImage(
+                        imageUrl: image ?? "",
+                        fit: BoxFit.cover,
+                        // بتملى المربع بشكل شيك جداً
+                        fadeInDuration: const Duration(milliseconds: 300),
+                        placeholder:
+                            (context, url) =>
+                            Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              color: Colors.grey[200],
+                            ),
+
+                        errorWidget:
+                            (context, url, error) =>
+                            Container(
                               color: Colors.grey[100],
                               child: Icon(
                                 Icons.broken_image_outlined,
                                 color: Colors.grey[400],
                                 size: 40,
                               ),
-                            )
-                            : CachedNetworkImage(
-                              imageUrl: image ?? "",
-                              fit: BoxFit.cover,
-                              // بتملى المربع بشكل شيك جداً
-                              fadeInDuration: const Duration(milliseconds: 300),
-                              placeholder:
-                                  (context, url) => Container(
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    color: Colors.grey[200],
-                                  ),
-
-                              errorWidget:
-                                  (context, url, error) => Container(
-                                    color: Colors.grey[100],
-                                    child: Icon(
-                                      Icons.broken_image_outlined,
-                                      color: Colors.grey[400],
-                                      size: 40,
-                                    ),
-                                  ),
+                            ),
+                      ),
                             ),
                   ),
                   // type with semi-transparent background for better readability
@@ -156,7 +157,6 @@ class CharacterCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-
                 // status and species in one line with a colored dot indicator for status
                 Row(
                   children: [
@@ -212,106 +212,3 @@ class CharacterCard extends StatelessWidget {
     );
   }
 }
-
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:flutter/material.dart';
-//
-// class CharacterCard extends StatelessWidget {
-//   const CharacterCard({
-//     super.key,
-//     this.image,
-//     this.name,
-//     this.status,
-//     this.species,
-//     this.type,
-//     this.gender,
-//   });
-//
-//   final String? image;
-//   final String? name;
-//   final String? status;
-//   final String? species;
-//   final String? type;
-//   final String? gender;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       shadowColor: Colors.grey.withAlpha(50),
-//       elevation: 3,
-//       color: Colors.white,
-//       child: Padding(
-//         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Expanded(
-//               flex: 4,
-//               child: Center(
-//                 child: CachedNetworkImage(
-//                   width: 100,
-//                   height: 100,
-//                   fit: BoxFit.contain,
-//                   fadeInDuration: const Duration(milliseconds: 300), // 👈 بونص: بيخلي الصورة تظهر بنعومة وميحملش كله كبسة واحدة
-//                   imageUrl: image ?? "",
-//                   placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2),),
-//                   errorWidget:
-//                       (context, url, error) => Container(
-//                     decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(8),),
-//                         child: Icon(Icons.broken_image_outlined, color: Colors.grey[400],),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             Text(
-//               name ?? '',
-//               maxLines: 2,
-//               style: TextStyle(
-//                 color: Colors.black,
-//                 fontSize: 15,
-//                 fontWeight: FontWeight.w600,
-//                 overflow: TextOverflow.ellipsis,
-//               ),
-//             ),
-//             SizedBox(height: 10),
-//             Text(
-//               status ?? '',
-//               maxLines: 3,
-//               style: TextStyle(
-//                 color: Colors.black45,
-//                 fontSize: 13,
-//                 fontWeight: FontWeight.w400,
-//                 overflow: TextOverflow.ellipsis,
-//               ),
-//             ),
-//
-//             Text(
-//               species ??'',
-//               style: const TextStyle(
-//                 color: Colors.deepPurple,
-//                 fontSize: 13,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//             Text(
-//               type ?? '',
-//               style: const TextStyle(
-//                 color: Colors.black87,
-//                 fontSize: 13,
-//                 fontWeight: FontWeight.w600,
-//               ),
-//             ),
-//             Text(
-//               gender ?? '',
-//               style: const TextStyle(
-//                 color: Colors.black87,
-//                 fontSize: 13,
-//                 fontWeight: FontWeight.w600,
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
